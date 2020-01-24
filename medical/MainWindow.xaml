@@ -1,0 +1,145 @@
+﻿<Window x:Class="medical.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="15"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource Material DesignFont}"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:medical"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:Converters="clr-namespace:MaterialDesignThemes.Wpf.Converters;assembly=MaterialDesignThemes.Wpf"
+        xmlns:ControlzEx="clr-namespace:ControlzEx;assembly=MaterialDesignThemes.Wpf"
+        xmlns:src="clr-namespace:medical.Classes"
+        mc:Ignorable="d"
+        Title="Medical"
+        Height="600" 
+        Width="800"
+        MinWidth="650"
+        MinHeight="500"
+        SizeChanged="Window_SizeChanged"
+        Loaded="Window_Loaded">
+
+    <Grid>
+        <StackPanel>
+            <Grid Height="30" Background="Transparent">
+                <Menu Height="50" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <MenuItem Header="Файл">
+                        <MenuItem x:Name="menuItem_NewProfect" Header="Новый проект" Click="menuItem_NewProfect_Click"></MenuItem>
+                        <MenuItem x:Name="menuItem_OpenProfect" Header="Открыть проект" Click="menuItem_OpenProfect_Click"></MenuItem>
+                        <Separator/>
+                        <MenuItem x:Name="menuItem_Save" Header="Сохранить" Click="menuItem_Save_Click"></MenuItem>
+                        <MenuItem x:Name="menuItem_SaveAs" Header="Сохранить как..." Click="menuItem_SaveAs_Click">
+                            <MenuItem Header="Excel файл"></MenuItem>
+                            <MenuItem Header="Текствовый файл"></MenuItem>
+                            <MenuItem Header="Word файл"></MenuItem>
+                        </MenuItem>
+                        <Separator/>
+                        <MenuItem Header="Выход"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Дополнительно">
+                        <MenuItem x:Name="Options" Header="Настройки" Click="Options_Click"></MenuItem>
+                        <MenuItem x:Name="MKB" Header="MKB-10" Click="MKB_Click"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Справка"></MenuItem>
+
+                </Menu>
+                <Button x:Name="btn_resultTableWindow" Margin="0,0,30,0" HorizontalAlignment="Right" VerticalAlignment="Center" Background="{x:Null}" BorderBrush="{x:Null}" Padding="0" 
+                        Width="30" Height="30" Visibility="Hidden" Click="btn_resultTableWindow_Click">
+                    <materialDesign:PackIcon Kind="TableLarge" Foreground="Black" Width="30" Height="30"/>
+                </Button>
+            </Grid>
+            <Line x:Name="line_separator1" X1="0" Y1="0" X2="800" Y2="0" Stroke="Black" StrokeThickness="2" Margin="0,0,0,0"/>
+            <Grid x:Name="grid_body" Visibility="Hidden">
+                <StackPanel>
+                    <DataGrid x:Name="grid_MainTable" Width="800" Height="300" HorizontalAlignment="Center"
+                 VerticalAlignment="Top" AutoGenerateColumns="False" 
+                 IsReadOnly="True" ColumnWidth="*" SelectionUnit="FullRow" GridLinesVisibility='All' VerticalGridLinesBrush="#FFDEDEDE" VerticalContentAlignment="Center">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                                <Setter Property="Foreground" Value="Black"/>
+                                <Setter Property="FontSize" Value="14"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+
+
+                        <DataGrid.Resources>
+                            <ContextMenu x:Key="ticketContextMenu">
+                                <ContextMenu.Items>
+                                    <MenuItem x:Name="menuItem_change" Header="Изменить" Click="menuItem_change_Click"></MenuItem>
+                                    <Separator />
+                                    <MenuItem x:Name="menuItem_delete" Header="Удалить" Click="menuItem_delete_Click"></MenuItem>
+                                </ContextMenu.Items>
+                            </ContextMenu>
+                        </DataGrid.Resources>
+
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                                <Setter Property="ContextMenu" Value="{StaticResource ticketContextMenu}" />
+                            </Style>
+                        </DataGrid.RowStyle>
+
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Номер б/л" Binding="{Binding Path=Number}" />
+                            <DataGridTextColumn Header="Пол" Binding="{Binding Path=Gender}" />
+                            <DataGridTextColumn Header="Дата рождения" Binding="{Binding Path=DateOfBirth, StringFormat={}\{0:dd.MM.yyyy\}}"/>
+                            <DataGridTextColumn Header="Кол-во дней" Binding="{Binding Path=DaysNumber}"/>
+                            <DataGridTextColumn Header="Шифр диагноза" Binding="{Binding Path=DiagnosisChipher}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Line x:Name="line_separator2" X1="0" Y1="0" X2="800" Y2="0" Stroke="Black" StrokeThickness="2" Margin="0,0,0,0"/>
+                    <Grid x:Name="grid_insertRow" >
+                        <StackPanel>
+                            <WrapPanel x:Name="wrap_insertGrid" Margin="0,20,0,30" Height="70" HorizontalAlignment="Center">
+                                <StackPanel Margin="20, 10, 20, 0">
+                                    <TextBlock Text="Номер б/л" />
+                                    <TextBox x:Name="txtBox_number" Text="{Binding Path=table.RowNumber}" PreviewTextInput="txtBox_number_PreviewTextInput"
+                                     FontSize="{Binding settings.FontSize}"/>
+                                </StackPanel>
+                                <StackPanel Margin="20, 10, 20, 0">
+                                    <TextBlock Text="Пол"/>
+                                    <ComboBox x:Name="cmbBox_gender" SelectionChanged="cmbBox_gender_SelectionChanged" Width="100" FontSize="{Binding settings.FontSize}">
+                                        <ComboBoxItem Content="Мужчина" Tag="М" ></ComboBoxItem>
+                                        <ComboBoxItem Content="Женщина" Tag="Ж"></ComboBoxItem>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Margin="20, 10, 20, 0">
+                                    <TextBlock Text="Дата рождения" />
+                                    <DatePicker x:Name="txtBox_birthday" Width="100" FontSize="{Binding settings.FontSize}"/>
+                                </StackPanel>
+                                <StackPanel Margin="20, 10, 20, 0" PreviewTextInput="StackPanel_PreviewTextInput">
+                                    <TextBlock Text="Кол-во дней" />
+                                    <TextBox x:Name="txtBox_numOfDays" MaxLength="3" FontSize="{Binding settings.FontSize}"/>
+
+                                </StackPanel>
+                                <StackPanel Margin="20, 10, 20, 0">
+                                    <TextBlock Text="Шифр заболеваниия" />
+                                    <ComboBox x:Name="cmbBox_chipher" HorizontalContentAlignment="Center" FontSize="{Binding settings.FontSize}" 
+                                              MaxDropDownHeight="300" TextBoxBase.TextChanged="cmbBox_chipher_TextChanged" IsTextSearchEnabled="False" IsEditable="true"
+                                              SelectionChanged="cmbBox_chipher_SelectionChanged" PreviewKeyDown="cmbBox_chipher_PreviewKeyDown">
+                                    </ComboBox>
+                                </StackPanel>
+                            </WrapPanel>
+                            <Grid x:Name="grid_insertButtons" HorizontalAlignment="Center" Height="30">
+                                <Button x:Name="btn_insertData" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="150" Content="Добавить" Click="btn_insertData_Click"/>
+                                <StackPanel x:Name="stack_changes" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Hidden">
+                                    <Button x:Name="btn_saveChanges" Content="Сохранить" Margin="0,0,20,0" Click="btn_saveChanges_Click"/>
+                                    <Button x:Name="btn_cancelChanges" Content="Отменить" Click="btn_cancelChanges_Click"/>
+                                </StackPanel>
+
+                            </Grid>
+                            <Button x:Name="button" Content="Button" Click="button_Click" Visibility="Hidden"/>
+                        </StackPanel>
+
+                    </Grid>
+                </StackPanel>
+            </Grid>
+
+        </StackPanel>
+    </Grid>
+</Window>

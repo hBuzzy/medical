@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "medical": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}
